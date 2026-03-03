@@ -7,9 +7,14 @@ public class Main {
         System.out.print("Would you like to encode or decode? (E/D): ");
         String choice = scanner.nextLine().trim().toUpperCase();
         while (!choice.equals("E") && !choice.equals("D")) {
-            System.out.print("Dude come on me: ");
+            System.out.print("Enter a valid choice: ");
+            choice = scanner.nextLine().trim().toUpperCase();
         }
-        encode(scanner);
+        if (choice.equals("E")){
+            encode(scanner);
+        } else { // choice.equals("D")
+            decode(scanner);
+        }
 
     }
 
@@ -32,6 +37,10 @@ public class Main {
             }
         }
         System.out.println(encodedText);
+    }
+
+    private static void decode(Scanner scanner) {
+
     }
 
 }
