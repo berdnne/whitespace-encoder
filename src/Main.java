@@ -5,53 +5,56 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        promptUser(scanner);
+    private enum UserChoice {
+        ENCODE, DECODE, QUIT
     }
 
-    private static void promptUser(Scanner scanner) {
-        System.out.print("Would you like to encode, decode, or quit? (E/D/Q): ");
-        String choice = scanner.nextLine().trim().toUpperCase();
-        while (!choice.equals("Q")) {
-            while (!choice.equals("E") && !choice.equals("D") && !choice.equals("Q")) {
-                System.out.print("Enter a valid choice: ");
-                choice = scanner.nextLine().trim().toUpperCase();
+    /** Runs the program. */
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        runCodec(scanner);
+    }
+
+    /** Prompts the user to choose between encoding, decoding, or exiting. */
+    private static void runCodec(Scanner scanner) {
+        UserChoice choice = getUserChoice(scanner);
+        while (!choice.equals(UserChoice.QUIT)) {
+            if (choice == UserChoice.ENCODE) {
+                displayEncodedText(scanner);
+            } else {
+                displayDecodedText(scanner);
             }
-            switch (choice) {
-                case "E":
-                    encode(scanner);
-                    break;
-                case "D":
-                    decode(scanner);
-                    break;
-                case "Q":
-                    System.exit(0);
-            }
-            System.out.print("Would you like to encode, decode, or quit? (E/D/Q): ");
-            choice = scanner.nextLine().trim().toUpperCase();
+            choice = getUserChoice(scanner);
         }
     }
 
-    private static void encode(Scanner scanner) {
+    private static UserChoice getUserChoice(Scanner scanner) {
+        System.out.print("Would you like to encode, decode, or quit? (E/D/Q): ");
+        String choice = scanner.nextLine().trim().toUpperCase();
+        while (!choice.equals("E") && !choice.equals("D") && !choice.equals("Q")) {
+            System.out.print("Enter a valid choice: ");
+            choice = scanner.nextLine().trim().toUpperCase();
+        }
+        return switch (choice) {
+            case "E" -> UserChoice.ENCODE;
+            case "D" -> UserChoice.DECODE;
+            case "Q" -> UserChoice.QUIT;
+            default -> throw new IllegalStateException("Unexpected value: " + choice);
+        };
+    }
+
+    private static void displayEncodedText(Scanner scanner) {
         System.out.print("Enter text to encode (only A-Z, 0-9, space): ");
+        String encodedText = getEncodedText(scanner);
+        System.out.println("Message created. It is on the line below.\n" + encodedText);
+    }
+
+    private static String getEncodedText(Scanner scanner) {
         String text = scanner.nextLine().trim().toUpperCase();
         while (!text.matches("^[A-Z0-9 ]+$") || text.isEmpty()) {
             System.out.print("Enter only valid characters. Must be at least one character in length: ");
             text = scanner.nextLine().trim().toUpperCase();
         }
-        String encodedText = getEncodedText(text);
-        Path file = Path.of("message.txt");
-        try {
-            Files.writeString(file, encodedText);
-        } catch (IOException ignored) {
-            System.out.println("Error. Remember to specify the correct file name.");
-            return;
-        }
-        System.out.println("Message created.");
-    }
-
-    private static String getEncodedText(String text) {
         StringBuilder encodedText = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             StringBuilder charInBinary = new StringBuilder(Integer.toBinaryString(text.charAt(i)));
@@ -69,25 +72,23 @@ public class Main {
         return encodedText.toString();
     }
 
-    private static void decode(Scanner scanner) {
+    private static void displayDecodedText(Scanner scanner){
         System.out.print("Enter encoded message: ");
-        String encodedText = scanner.nextLine();
-        int length = encodedText.length();
-        if (length % 7 != 0) {
-            System.out.println("Error. The string cannot be split evenly. " +
-                    "Make sure you've properly copied the string at the exact bounds.");
-            return;
-        }
-        String decodedText = getDecodedText(encodedText);
-        System.out.println(decodedText);
+        String decodedText = getDecodedText(scanner);
+        System.out.println("Message decoded. It is on the line below.\n" + decodedText);
     }
 
-    private static String getDecodedText(String encodedText) {
+    private static String getDecodedText(Scanner scanner) {
+        String encodedText = scanner.nextLine().replace("\n", "");
+        while (encodedText.length() % 7 != 0) {
+            System.out.print("Error. The string cannot be split evenly. " +
+                    "Make sure you've properly copied the string at the exact bounds. Try again: ");
+            encodedText = scanner.nextLine().replace("\n", "");
+        }
         StringBuilder decodedText = new StringBuilder();
         for (int i = 0; i < encodedText.length() - 6; i += 7) {
             String binaryChar = encodedText.substring(i, i + 7)
-                    .replace(" ", "1").replace(" ", "0")
-                    .replace("\n", "");
+                    .replace(" ", "1").replace(" ", "0");
             char decodedChar = (char) (Integer.parseInt(binaryChar, 2));
             decodedText.append(decodedChar);
         }
