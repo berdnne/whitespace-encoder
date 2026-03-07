@@ -6,13 +6,18 @@ public class Main {
         ENCODE, DECODE, QUIT
     }
 
-    /** Runs the program. */
+    /**
+     * Runs the program.
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         runCodec(scanner);
     }
 
-    /** Prompts the user to choose between encoding, decoding, or exiting. */
+    /**
+     * Prompts the user to choose between encoding, decoding, or exiting.
+     * Chooses the following function accordingly.
+     */
     private static void runCodec(Scanner scanner) {
         UserChoice choice = getUserChoice(scanner);
         while (!choice.equals(UserChoice.QUIT)) {
@@ -25,6 +30,10 @@ public class Main {
         }
     }
 
+    /**
+     * Prompts the user to encode, decode, or exit the program.
+     * @return the user's choice as a {@code UserChoice} enum.
+     */
     private static UserChoice getUserChoice(Scanner scanner) {
         System.out.print("Would you like to encode, decode, or quit? (E/D/Q): ");
         String choice = scanner.nextLine().trim().toUpperCase();
@@ -40,12 +49,20 @@ public class Main {
         };
     }
 
+    /**
+     * Prompts user for raw text, gets input, and outputs encoded text.
+     */
     private static void displayEncodedText(Scanner scanner) {
         System.out.print("Enter text to encode (only A-Z, 0-9, space): ");
         String encodedText = getEncodedText(scanner);
         System.out.println("Message created. It is on the line below.\n" + encodedText);
     }
 
+    /**
+     * Encodes text by converting characters to binary strings.
+     * Different bits are represented by different whitespace characters.
+     * @return the encoded text.
+     */
     private static String getEncodedText(Scanner scanner) {
         String text = scanner.nextLine().trim().toUpperCase();
         while (!text.matches("^[A-Z0-9 ]+$") || text.isEmpty()) {
@@ -69,12 +86,21 @@ public class Main {
         return encodedText.toString();
     }
 
+    /**
+     * Prompts user for encoded text, gets input, and outputs raw text.
+     */
     private static void displayDecodedText(Scanner scanner){
         System.out.print("Enter encoded message: ");
         String decodedText = getDecodedText(scanner);
         System.out.println("Message decoded. It is on the line below.\n" + decodedText);
     }
 
+    /**
+     * Decodes text by gathering characters from a specific whitespace string.
+     * This ignores all characters besides the two special whitespace characters;
+     * noisy input text will not throw errors.
+     * @return the decoded text.
+     */
     private static String getDecodedText(Scanner scanner) {
         String encodedText = scanner.nextLine().replaceAll("[^  ]+","");
         System.out.println(encodedText);
