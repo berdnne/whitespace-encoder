@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="whitespace_encoder:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/whitespace_encoder_jar</output-path>
+    <root id="archive" name="whitespace_encoder.jar">
+      <element id="module-output" name="whitespace_encoder" />
+    </root>
+  </artifact>
+</component>
