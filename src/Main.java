@@ -76,11 +76,12 @@ public class Main {
     }
 
     private static String getDecodedText(Scanner scanner) {
-        String encodedText = scanner.nextLine().replace("\n", "");
+        String encodedText = scanner.nextLine().replaceAll("[^  ]+","");
+        System.out.println(encodedText);
         while (encodedText.length() % 7 != 0) {
             System.out.print("Error. The string cannot be split evenly. " +
                     "Make sure you've properly copied the string at the exact bounds. Try again: ");
-            encodedText = scanner.nextLine().replace("\n", "");
+            encodedText = scanner.nextLine();
         }
         StringBuilder decodedText = new StringBuilder();
         for (int i = 0; i < encodedText.length() - 6; i += 7) {
